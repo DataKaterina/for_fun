@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#161a1f">
+  <title>Где ты, шпион?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Oswald:wght@500;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+
+  <!-- Настройки -->
+  <section id="screen-setup" class="screen setup">
+    <header class="masthead">
+      <h1 data-focus tabindex="-1">Где ты, шпион?</h1>
+      <p class="tagline">Один телефон на всех. Найди того, кто не знает, где вы.</p>
+      <a class="link" href="rules.html">Правила игры</a>
+    </header>
+
+    <fieldset class="group">
+      <legend>Игроки</legend>
+      <p class="hint">Добавь тех, кто сидит за столом, в порядке по кругу.</p>
+      <form id="add-form" class="add" autocomplete="off">
+        <input id="player-name" type="text" maxlength="20" placeholder="Имя игрока" aria-label="Имя игрока" enterkeyhint="done">
+        <button type="submit" class="btn">Добавить</button>
+      </form>
+      <p id="player-msg" class="msg" role="status"></p>
+      <ol id="players" class="players"></ol>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Шпионы</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="spies" value="1"><span>1</span></label>
+        <label class="chip"><input type="radio" name="spies" value="2"><span>2</span></label>
+        <label class="chip"><input type="radio" name="spies" value="3"><span>3</span></label>
+      </div>
+      <p id="spies-hint" class="hint"></p>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Локации</legend>
+      <p id="pool-summary"></p>
+      <details id="filters" class="opt">
+        <summary>Выбрать тему и сложность</summary>
+        <p class="sub">Сложность</p>
+        <label class="toggle">
+          <input type="checkbox" name="level" value="1">
+          <span class="box"></span>
+          <span><b>Лёгкая</b><small>Места, которые узнаёт любой. Например: аэропорт, школа, бродячий цирк.</small></span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" name="level" value="2">
+          <span class="box"></span>
+          <span><b>Средняя</b><small>Узнаваемые, но с нюансами. Например: хостел, пекарня, маяк.</small></span>
+        </label>
+        <label class="toggle">
+          <input type="checkbox" name="level" value="3">
+          <span class="box"></span>
+          <span><b>Сложная</b><small>Места, которые легко спутать с соседними. Например: сауна и баня, типография и редакция, бункер.</small></span>
+        </label>
+        <div class="sub-row">
+          <p class="sub">Темы</p>
+          <button type="button" id="filters-reset" class="link small" hidden>Сбросить выбор</button>
+        </div>
+        <div id="themes" class="chips"></div>
+      </details>
+      <p id="pool-count" class="hint" role="status"></p>
+      <button type="button" id="history-reset" class="link small" hidden>Сбросить историю мест</button>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Режимы</legend>
+      <label class="toggle">
+        <input type="checkbox" name="mode" value="knowTheme">
+        <span class="box"></span>
+        <span><b>Шпион знает тему</b><small>Шпион видит категорию места, остальные видят само место.</small></span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" name="mode" value="spiesKnow">
+        <span class="box"></span>
+        <span><b>Шпионы знают друг друга</b><small>Работает, если шпионов двое или больше. По умолчанию они действуют вслепую.</small></span>
+      </label>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Таймер</legend>
+      <label class="toggle">
+        <input type="checkbox" name="mode" value="timerOn">
+        <span class="box"></span>
+        <span><b>Ограничить раунд по времени</b><small>Без таймера раунд идёт, пока шпиона не вычислят или он не назовёт место.</small></span>
+      </label>
+      <div id="timer-opts" class="chips" hidden>
+        <label class="chip"><input type="radio" name="timer" value="5"><span>5 минут</span></label>
+        <label class="chip"><input type="radio" name="timer" value="8"><span>8 минут</span></label>
+        <label class="chip"><input type="radio" name="timer" value="10"><span>10 минут</span></label>
+      </div>
+    </fieldset>
+
+    <div class="start-bar">
+      <p id="start-hint" class="msg" role="status"></p>
+      <button id="start" class="btn btn-primary" type="button">Раздать роли</button>
+    </div>
+  </section>
+
+  <!-- Раздача карточек -->
+  <section id="screen-deal" class="screen center" hidden>
+    <p id="deal-progress" class="muted"></p>
+    <h2 id="deal-name" class="deal-name"></h2>
+    <div id="card" class="card" role="button" tabindex="0" aria-label="Карточка игрока. Нажми, чтобы открыть или закрыть." data-focus>
+      <div class="card-inner">
+        <div class="face front">
+          <div class="stamp">Совершенно секретно</div>
+          <p class="front-note">Нажми, чтобы открыть досье</p>
+        </div>
+        <div class="face back" id="card-back"></div>
+      </div>
+    </div>
+    <p id="deal-hint" class="hint"></p>
+    <button type="button" class="link" data-exit>Выйти в настройки</button>
+  </section>
+
+  <!-- Все посмотрели -->
+  <section id="screen-ready" class="screen center" hidden>
+    <h2 class="display" data-focus tabindex="-1">Все досье розданы</h2>
+    <p class="lead">Положи телефон на стол. Теперь выберем, кто задаёт первый вопрос.</p>
+    <button id="pick-starter" type="button" class="btn btn-primary">Кто начинает?</button>
+    <button type="button" class="link" data-exit>Выйти в настройки</button>
+  </section>
+
+  <!-- Игра -->
+  <section id="screen-play" class="screen center" hidden>
+    <p id="starter-label" class="muted" data-focus tabindex="-1">Первым спрашивает</p>
+    <p id="starter" class="starter"></p>
+
+    <div id="clock-box" class="clock-box" hidden>
+      <div id="clock" class="clock" role="timer">00:00</div>
+      <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+      <p id="clock-note" class="msg" role="status"></p>
+    </div>
+    <p id="no-timer-note" class="hint lead">Раунд идёт, пока шпиона не вычислят или он не назовёт место целиком.</p>
+
+    <div class="end-btns">
+      <button id="end-found" type="button" class="btn btn-danger">Победили свои</button>
+      <button id="end-spy" type="button" class="btn btn-danger alt">Победил шпион</button>
+    </div>
+
+    <div class="row-btns">
+      <button id="pause" type="button" class="btn" hidden>Пауза</button>
+      <a class="btn" href="rules.html" target="_blank" rel="noopener">Правила игры</a>
+    </div>
+  </section>
+
+  <!-- Итог -->
+  <section id="screen-reveal" class="screen center" hidden>
+    <h2 id="reveal-title" class="stamp stamp-title" data-focus tabindex="-1"></h2>
+    <dl id="reveal-sheet" class="sheet"></dl>
+    <button id="again" type="button" class="btn btn-primary">Ещё раунд</button>
+    <button id="to-setup" type="button" class="link">Вернуться к настройкам</button>
+  </section>
+
+</main>
+
+<script src="locations.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
