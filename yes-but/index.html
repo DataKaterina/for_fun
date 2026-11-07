@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1c1636">
+  <title>Да, но…</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600&family=Unbounded:wght@500;700&display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="app">
+
+  <!-- Настройки -->
+  <section id="screen-setup" class="screen setup">
+    <header class="masthead">
+      <h1 data-focus tabindex="-1">Да, <span class="but">но…</span></h1>
+      <p class="tagline">Один читает мечту. Другой всё портит. Один телефон на всех.</p>
+    </header>
+
+    <details class="how">
+      <summary>Как играть</summary>
+      <ol>
+        <li>На экране мечта: «Я умею летать».</li>
+        <li>Один читает её вслух.</li>
+        <li>Другой отвечает «Но…» и портит всё как можно смешнее: «…но только вверх ногами».</li>
+        <li>Дальше — следующая карточка, роли меняются.</li>
+      </ol>
+      <p>Очков и голосования нет. Смеётесь вместе, это и есть победа.</p>
+    </details>
+
+    <fieldset class="group">
+      <legend>Режим</legend>
+      <div class="chips">
+        <label class="chip"><input type="radio" name="mode" value="duel"><span>Дуэль</span></label>
+        <label class="chip"><input type="radio" name="mode" value="company"><span>Компания</span></label>
+      </div>
+      <p id="mode-hint" class="hint"></p>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Категории</legend>
+      <div id="cats" class="chips"></div>
+      <p id="cats-hint" class="hint" role="status"></p>
+    </fieldset>
+
+    <fieldset class="group">
+      <legend>Таймер</legend>
+      <label class="toggle">
+        <input type="checkbox" id="timer-on">
+        <span class="box"></span>
+        <span><b>20 секунд на «Но…»</b><small>Запускаешь сам, когда карточку прочитали. По умолчанию выключен.</small></span>
+      </label>
+    </fieldset>
+
+    <div class="start-bar">
+      <button id="start" class="btn btn-primary" type="button">Поехали</button>
+    </div>
+  </section>
+
+  <!-- Игра -->
+  <section id="screen-play" class="screen play" hidden>
+    <div class="topbar">
+      <button type="button" id="exit" class="link">← Настройки</button>
+      <span id="counter" class="muted" aria-live="polite"></span>
+    </div>
+
+    <p id="role" class="role" aria-live="polite"></p>
+
+    <article id="card" class="card" aria-live="polite">
+      <p id="card-cat" class="card-cat"></p>
+      <p id="card-text" class="card-text" data-focus tabindex="-1"></p>
+      <p class="card-but" aria-hidden="true">Но…</p>
+    </article>
+
+    <div class="aids">
+      <button type="button" id="hint-btn" class="btn btn-soft" aria-expanded="false" aria-controls="hint-box">Подсказка</button>
+      <p id="hint-box" class="hint-box" hidden></p>
+
+      <div id="timer-box" class="timer-box" hidden>
+        <div id="clock" class="clock" role="timer">20</div>
+        <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+        <button type="button" id="timer-btn" class="btn btn-soft">Запустить таймер</button>
+        <p id="timer-note" class="msg" role="status"></p>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button type="button" id="back" class="btn">Назад</button>
+      <button type="button" id="skip" class="btn">Пропустить</button>
+      <button type="button" id="next" class="btn btn-primary">Дальше</button>
+    </div>
+  </section>
+
+</main>
+
+<script src="cards.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
